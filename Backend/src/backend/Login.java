@@ -69,7 +69,7 @@ public class HelloWorld {
 			ResultSet rs = ps.executeQuery();
 			
 			while (rs.next()) {
-				if (rs.getString("password").equals(pwd)) {
+				if (Hash(rs.getString("password")).equals(pwd)) {
 					System.out.println("Login success");
 					return true;
 				}
