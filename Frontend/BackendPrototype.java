@@ -24,6 +24,7 @@ public class BackendPrototype extends Application {
 		stage.setTitle("Project 201");
 		stage.setScene(scene);
 		stage.show();
+		//tai is funny 
 		
 		HBox usernamePane = new HBox();
 		Label usernameLabel = new Label("Username: ");
