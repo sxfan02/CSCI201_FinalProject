@@ -9,7 +9,8 @@
 	<label for="pword">Password:</label>
         <input type ="text" name ="password" ><br/> <br/>
         <input type = "submit" value = "Submit" /> <br/>
+        <p class="text-center" style ="color: green">${badLogin}</p>
       </form>
-        <a href="http://localhost:8080/logintest/Registration.html">No Account? Sign up instead!</a> 
+        <a href="http://localhost:8080/logintest/Registration.jsp">No Account? Sign up instead!</a> 
    </body>
 </html>

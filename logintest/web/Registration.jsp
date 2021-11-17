@@ -9,9 +9,9 @@
 <html>
    <body>
        <div class ="header">
-           <h1>Login</h1>
+           <h1>Sign Up</h1>
        </div>
-      <form action = "RegistrationLab" method = "GET">
+      <form action = "RegistrationServlet" method = "POST">
         <label for="uname">Username:</label>
         <input type = "text" name = "username"> <b>${formatU}</b>
         <br>
