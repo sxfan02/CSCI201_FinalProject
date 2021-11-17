@@ -30,6 +30,38 @@ public class RegistrationServlet extends HttpServlet {
         System.out.println("Usename Input: " + username);
         System.out.println("Password Input: " + password);
         System.out.println("Email: " + email);
+        
+        if(!password.equals("") && !username.equals("") && !repword.equals(""))
+        {
+           if (username.matches("[a-zA-Z]+"))
+           {
+	       if (password.matches("[a-zA-Z]+"))
+	       {
+                   if (password.equals(repword))
+                   {
+                        pw.println("<table><tr><th>Username</th><th>Password</th></tr><tr><td>" + username + "</td>"
+	    	   	+ "<td>" + password + "</td></tr>");
+                   }
+                   else {
+                       request.setAttribute("passmismatch", "Password entries do not match");
+                       request.getRequestDispatcher("Registration.jsp").forward(request, response);                   }
+	       }
+	       else 
+	       {
+                  request.setAttribute("formatP", "Password must use only alphabetical characters");
+                  request.getRequestDispatcher("Registration.jsp").forward(request, response);
+	       }
+           }
+            else {
+                request.setAttribute("formatU", "Username must use only alphabetical characters");
+                request.getRequestDispatcher("Registration.jsp").forward(request, response);
+            }
+        }
+        else {
+           request.setAttribute("none", "Please fill out all fields");
+           request.getRequestDispatcher("Registration.jsp").forward(request, response);
+        }
+        
         if (Login.onRegistration("users", username))
         {
             Login.post("users", username, password, email);
