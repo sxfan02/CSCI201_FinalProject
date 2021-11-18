@@ -1,0 +1,403 @@
+package hw05;
+
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.event.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.scene.shape.*;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import javafx.scene.paint.*;
+
+public class hw05Rouse extends Application {
+	Pane hbox, vbox, worldPane, bufferPane;
+	protected int worldSize = 40;
+	protected LinkedList<Cell> theCells;
+	protected Cell[][] world;
+	protected Random randy;;
+	protected FlowPane buttonPane;
+	protected VBox root;
+	static String direction;
+	ArrayList<Cell> emptyList = new ArrayList<Cell>();
+	Driver dr;
+	// TextField minTextField, maxTextField;
+
+	public static void main(String[] args) {
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage stage) {
+		stage.setTitle("HW05 Neighborhood");
+		hbox = new HBox();
+		hbox.setPrefHeight(800);
+		hbox.setPrefWidth(600);
+		hbox.setStyle("-fx-background-color: WHITE");
+		Scene scene = new Scene(hbox, 900, 600);
+
+		// Passing an argument into Vbox sets the spacing
+		vbox = new VBox(10);
+		vbox.setPrefHeight(800);
+		vbox.setPrefWidth(200);
+		vbox.setStyle("-fx-background-color:LEMONCHIFFON");
+		hbox.getChildren().add(vbox);
+
+		bufferPane = new Pane();
+		bufferPane.setPrefHeight(800);
+		bufferPane.setPrefWidth(100);
+		bufferPane.setStyle("-fx-background-color:WHITE");
+		hbox.getChildren().add(bufferPane);
+
+		worldPane = new Pane();
+		worldPane.setPrefHeight(700);
+		worldPane.setPrefWidth(400);
+		worldPane.setStyle("-fx-background-color:WHITE");
+		hbox.getChildren().add(worldPane);
+
+		stage.setScene(scene);
+		stage.show();
+
+		// Group 1, "City Edge Length" label and empty text box
+		HBox g1 = new HBox(5);
+		Label celLabel = new Label("City Edge Length");
+		TextField celTextBox = new TextField();
+		celTextBox.setPrefWidth(70);
+		g1.getChildren().add(celLabel);
+		g1.getChildren().add(celTextBox);
+		vbox.getChildren().add(g1);
+
+		// Group 2, buttons for [Single Step] [Run]
+		HBox g2 = new HBox(5);
+		Button singleStep = new Button();
+		singleStep.setText("Single Step");
+		vbox.getChildren().add(singleStep);
+		Button run = new Button();
+		run.setText("Run");
+		Button stop = new Button();
+		stop.setText("Stop");
+		g2.getChildren().add(singleStep);
+		g2.getChildren().add(run);
+		g2.getChildren().add(stop);
+		stop.setOnAction((ActionEvent event) -> {
+			dr.stop();
+		});
+		singleStep.setOnAction((ActionEvent event) -> {
+			step();
+		});
+
+		vbox.getChildren().add(g2);
+
+		// Group 3, "Minimum other" with empty text box
+		HBox g3 = new HBox(5);
+		Label minLabel = new Label("Minimum other ");
+		TextField minTextField = new TextField();
+		minTextField.setPrefWidth(50);
+		g3.getChildren().addAll(minLabel, minTextField);
+		vbox.getChildren().add(g3);
+
+		// Group 4, "Max other" with empty text box
+		HBox g4 = new HBox(5);
+		Label maxLabel = new Label("Maximum other");
+		TextField maxTextField = new TextField();
+		maxTextField.setPrefWidth(50);
+		g4.getChildren().addAll(maxLabel, maxTextField);
+		vbox.getChildren().add(g4);
+
+		// Group 5, "Percent Red" with empty text box
+		HBox g5 = new HBox(25);
+		Label redLabel = new Label("Percent Red");
+		TextField redTextField = new TextField();
+		redTextField.setPrefWidth(50);
+		g5.getChildren().addAll(redLabel, redTextField);
+		vbox.getChildren().add(g5);
+
+		// Group 5, "Percent Blue" with empty text box
+		HBox g6 = new HBox(23);
+		Label blueLabel = new Label("Percent Blue");
+		TextField blueTextField = new TextField();
+		blueTextField.setPrefWidth(50);
+		g6.getChildren().addAll(blueLabel, blueTextField);
+		vbox.getChildren().add(g6);
+
+		// Group 7, "Empty 20%" with a reset button
+		HBox g7 = new HBox(5);
+		Label emptyLabel = new Label("Empty 20%");
+		Button reset = new Button();
+		reset.setText("Reset");
+		g7.getChildren().addAll(emptyLabel, reset);
+		reset.setOnAction((ActionEvent event) -> {
+			dr.stop();
+			makeWorld();
+			assignNeighbors();
+		});
+		vbox.getChildren().add(g7);
+
+		/*
+		 * Controls the run button. When the run button is pressed it grabs the value
+		 * from the textbox and sets the size of the world equal to this value.
+		 */
+		run.setOnAction((ActionEvent event) -> {
+			// Check if the user put values into the city edge length textbox
+			if (celTextBox.getText() != "") {
+				String sizeString = celTextBox.getText();
+				int sizeInt = Integer.parseInt(sizeString);
+				/// Stops the user from crashing their computer
+				if (sizeInt > 100) {
+					System.out.println(
+							"Sorry, setting the world size too high will make the program lag out.\nThe world size has been set to a safe maximum, 100.");
+					sizeInt = 100;
+				}
+				worldSize = sizeInt;
+			}
+
+			// Gets the value from the Minimum Other text field
+			if (minTextField.getText() != "") {
+				String minOtherString = minTextField.getText();
+				int minOtherInt = Integer.parseInt(minOtherString);
+			}
+
+			// Gets the value from the Maximum Other text field
+			if (maxTextField.getText() != "") {
+				String maxOtherString = maxTextField.getText();
+				int maxOtherInt = Integer.parseInt(maxOtherString);
+			}
+
+			// Gets the value from the percent red text box
+			if (redTextField.getText() != "") {
+				String redString = redTextField.getText();
+				int redInt = Integer.parseInt(redString);
+			}
+
+			// Gets the value from the percent blue text box
+			if (blueTextField.getText() != "") {
+				String blueString = blueTextField.getText();
+				int blueInt = Integer.parseInt(blueString);
+			}
+
+			makeWorld();
+			assignNeighbors();
+			dr.start();
+		});
+
+		theCells = new LinkedList<Cell>();
+		randy = new Random();
+
+		makeWorld();
+		assignNeighbors();
+		dr = new Driver();
+
+	}
+
+	// make and return a button with label s and action h
+	public Button makeButton(String s, EventHandler<ActionEvent> h) {
+		Button b = new Button(s);
+		buttonPane.getChildren().add(b);
+		b.setOnAction(h);
+		return b;
+	}
+
+	// make the list and array of cells, fill in the cells
+	public void makeWorld() {
+		double scale = 500 / worldSize;
+		world = new Cell[worldSize][worldSize];
+		for (int i = 0; i < worldSize; i++) {
+			for (int j = 0; j < worldSize; j++) {
+				Cell ce = makeCell(scale, i * scale, j * scale);
+				worldPane.getChildren().add(ce);
+				theCells.add(ce);
+				world[i][j] = ce;
+			}
+		}
+	}
+
+	// tell each cell who its neighbors are
+	// tell each cell who its neighbors are
+	public void assignNeighbors() {
+		for (int i = 0; i < worldSize; i++) {
+			for (int j = 0; j < worldSize; j++) {
+				Cell ce = world[i][j];
+				ce.addNeighbor(getCell(i - 1, j - 1));
+				ce.addNeighbor(getCell(i, j - 1));
+				ce.addNeighbor(getCell(i + 1, j - 1));
+				ce.addNeighbor(getCell(i - 1, j));
+				ce.addNeighbor(getCell(i + 1, j));
+				ce.addNeighbor(getCell(i - 1, j + 1));
+				ce.addNeighbor(getCell(i, j + 1));
+				ce.addNeighbor(getCell(i + 1, j + 1));
+			}
+		}
+	}
+
+	public Cell makeCell(double scale, double x, double y) {
+		Cell c = new Cell(scale, x, y);
+		return c;
+	}
+
+	public class Driver extends AnimationTimer {
+		@Override
+		public void handle(long now) {
+			step();
+		}
+	}
+
+	// take a single step of the simulation
+	public void step() {
+		Collections.shuffle(theCells);
+		for (Cell c : theCells) {
+			c.setNext();
+		}
+		for (Cell c : theCells) {
+			c.update();
+		}
+	}
+
+	public Cell getCell(int i, int j) {
+		return world[wrap(i)][wrap(j)];
+	}
+
+	// returns int 0<=ret<worldSize. Wraps as needed.
+	public int wrap(int ij) {
+		if (ij < 0) {
+			ij = 0;
+		}
+		if (ij >= worldSize) {
+			ij = worldSize - 1;
+		}
+		return ij;
+	}
+
+	//Consider taking itp 380
+	public class Cell extends Rectangle {
+		protected boolean alive;
+		protected boolean nextAlive;
+		protected Color color;
+		double toleranceMaxOther = .38; // 38 is the last stable state
+		double toleranceMinOther = 1;
+		int redNeighbor, blueNeighbor;
+		boolean controlVariable = false; 
+		boolean operatedOn = false;
+		// Red is 1, blue is 0
+		boolean red = false, blue = false, emptyHouse = false;
+		LinkedList<Cell> neighbors;
+
+		public Cell(double wh, double x, double y) 
+		{
+			super(wh, wh);
+			// 20% of houses are empty to start with
+			emptyHouse = (Math.random() < 0.15);
+			if (!emptyHouse) {
+				red = (Math.random() < 0.5);
+			}
+			if (!emptyHouse && !red) {
+				blue = true;
+			}
+			operatedOn = false;
+			neighbors = new LinkedList<Cell>();
+			setX(x);
+			setY(y);
+			showit();
+		}
+
+		public void addNeighbor(Cell c) {
+			neighbors.add(c);
+		}
+
+		// decide if you'll red, blue, or white
+		public void setNext()
+		{
+			int count = 0;
+			double redCount = 0, blueCount = 0;
+			for (Cell c : neighbors) {
+				redCount += (c.red ? 1 : 0);
+				blueCount += (c.blue ? 1 : 0);
+			}
+			// Moving a red cell if the tolerance is wrong
+			NumberFormat formatter = new DecimalFormat("#0.00");
+//			System.out.println("redCount: " + redCount + "    blueCount: " + blueCount + "     redCount/8: "
+//					+ String.format("%.2f", redCount / 8) + "    blueCount/8: " + String.format("%.2f", blueCount / 8)
+//					+ "    Willingess to tolerate others: " + toleranceMaxOther);
+			
+			//Code to make my control variable flip flop with every iteration 
+			//If its true set it to false
+			//If its false set it to true 
+//			System.out.println("Before clear");
+//			for(Cell c: emptyList)
+//			{
+//				System.out.println(c);
+//			}
+//			emptyList.clear();
+//			System.out.println("After clear");
+//			for(Cell c: emptyList)
+//			{
+//				System.out.println(c);
+//			}
+			for (Cell c : theCells) 
+			{
+					if (c.emptyHouse) 
+					{
+						emptyList.add(c);
+					}
+			}
+		
+			if (red) 
+			{
+				//Make a square move if it detects its beyond its max tolerance for others 
+				if (redCount / 8 > toleranceMaxOther) 
+				{
+					//If the list is not empty
+					if(!emptyList.isEmpty())
+					{
+						emptyHouse = true; red = false; blue = false;
+						int randomIndex = (int)(Math.random() * emptyList.size() +1);
+						emptyList.get(randomIndex).red = true;
+						emptyList.get(randomIndex).blue = false;
+						emptyList.get(randomIndex).emptyHouse = false;
+						emptyList.remove(randomIndex);
+					}
+				}
+				if(blue)
+				{
+					if (blueCount / 8 > toleranceMaxOther) 
+					{
+						//If the list is not empty
+						if(!emptyList.isEmpty())
+						{
+							emptyHouse = true; red = false; blue = false;
+							int randomIndex = (int)(Math.random() * emptyList.size()+1);
+							emptyList.get(randomIndex).blue = true;
+							emptyList.get(randomIndex).emptyHouse = false;
+							emptyList.get(randomIndex).red = false;
+							emptyList.remove(randomIndex);
+						}
+					}
+				}
+				
+			}
+			controlVariable = ! controlVariable; 
+		}
+
+		public void update() {
+			alive = nextAlive;
+			showit();
+		}
+
+		public void showit() {
+			if (emptyHouse) {
+				color = Color.WHITE;
+			} else if (blue) {
+				color = Color.BLUE;
+			} else if (red) {
+				color = Color.RED;
+			} else {
+				System.out.println("Something went wrong in color");
+			}
+			setFill(color);
+		}
+
+	}
+}
