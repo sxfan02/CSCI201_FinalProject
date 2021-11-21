@@ -36,7 +36,9 @@ public class RegistrationServlet extends HttpServlet {
                    {
                         if (Login.onRegistration("users", username))
                         {
-                            Login.post("users", username, password, email);
+                            String hashed = Login.Hash(password);
+                            System.out.println(hashed);
+                            Login.post("users", username, hashed, email);
                             pw.println("<h1>" + "Thank You For Registering" + "</h1>");
                         }
                         else {

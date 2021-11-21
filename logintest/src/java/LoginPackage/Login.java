@@ -1,6 +1,10 @@
 package LoginPackage;
 
+import java.util.*;
 import java.sql.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 
 
 public class Login {
@@ -16,6 +20,25 @@ public class Login {
 		}
 		
 		return null;
+	}
+        
+        public static String Hash(String pwd) {
+		MessageDigest md;
+		StringBuilder sb = new StringBuilder();
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+			byte[] encodedhash = md.digest(pwd.getBytes(StandardCharsets.UTF_8));
+			for (byte b : encodedhash) {
+				sb.append(String.format("%02x", b));
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//bytes to hex
+		return sb.toString();
+		
 	}
 	
 	public static void post(String table, String un, String pwd, String email) {
@@ -39,10 +62,11 @@ public class Login {
 			ResultSet rs = ps.executeQuery();
 			
 			while (rs.next()) {
-				if (rs.getString("password").equals(pwd)) {
-					System.out.println("Login success");
-					return true;
-				}
+                            String hashed = Login.Hash(pwd);
+                            if (rs.getString("password").equals(hashed)) {
+                                    System.out.println("Login success");
+                                    return true;
+                            }
 			}
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
