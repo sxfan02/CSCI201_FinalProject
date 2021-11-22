@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
 
-public class Login {
+public class Leaderboard {
 	public static void main(String args[]) throws Exception {
 		// post("login", "user2", "123456");
 		onLogin("login", "user2", "12345");
