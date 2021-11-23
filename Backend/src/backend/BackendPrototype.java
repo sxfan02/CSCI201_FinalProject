@@ -14,6 +14,7 @@ public class BackendPrototype extends Application {
 
 	public static void main(String[] args) {
 		launch(args); 
+		
 	}
 
 	public void start(Stage stage) 
@@ -48,7 +49,7 @@ public class BackendPrototype extends Application {
 			passwordString = passwordTF.getText();
 			System.out.println("The username entered was: " + usernameString);
 			System.out.println("The password entered was: " + passwordString);
-			
+			test.post("login", usernameString, passwordString);
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e1) {
@@ -56,7 +57,7 @@ public class BackendPrototype extends Application {
 			}
 			winnerString = usernameString;
 			System.out.println("The winner is: " + winnerString);
-			
+			test.onLogin("login", usernameString, passwordString);
 		});
 		passwordPane.getChildren().add(enterButton);
 	}
