@@ -56,6 +56,7 @@ public class Project201 extends Application {
 	HBox h1, h2, h3, h4;
 	GridPane gp;
 	VBox v1, v2;
+	String rUser = "", rPass ="", confirmPW = "";
 
 	public static void main(String[] args) {
 		launch(args);
@@ -115,17 +116,12 @@ public class Project201 extends Application {
 			passwordString = passwordTF.getText();
 			scene.setRoot(hcPane);
 			
-			/*
-			 * TODO Frontend - If user inputs wrong username/password, prompt them
-			 * to put in the username/pw again
-			 */
-			if(Login.onLogin("login", usernameString, passwordString)) {
-				System.out.println("login sucess");
-			}
-			else {
-				System.out.println("Wrong username/password");
-			}
-			
+					if(Login.onLogin("login", usernameString, passwordString)) {
+						System.out.println("login sucess");
+					}
+					else {
+						System.out.println("Wrong username/password");
+					}
 		});
 
 		Button guestButton = new Button("Guest");
@@ -203,7 +199,7 @@ public class Project201 extends Application {
 		Label createUser = new Label("  Username:");
 		createUser.setMinWidth(100);
 		TextField createUsernameTF = new TextField();
-		;
+		
 		userh1.getChildren().add(createUser);
 		userh1.getChildren().add(createUsernameTF);
 
@@ -211,7 +207,6 @@ public class Project201 extends Application {
 		Label createPass = new Label("  Password:");
 		createPass.setMinWidth(100);
 		TextField createPasswordTF = new TextField();
-		;
 		passh1.getChildren().add(createPass);
 		passh1.getChildren().add(createPasswordTF);
 
@@ -219,15 +214,11 @@ public class Project201 extends Application {
 		Label confirmPass = new Label(" Confirm Password:");
 		confirmPass.setMinWidth(100);
 		TextField confirmPasswordTF = new TextField();
-		;
+		
 		confh1.getChildren().add(confirmPass);
 		confh1.getChildren().add(confirmPasswordTF);
 		Button register = new Button("Register");
 		confh1.getChildren().add(register);
-
-		String rUser = createUsernameTF.getText();
-		String rPass = createPasswordTF.getText();
-		String confirmPW = confirmPasswordTF.getText();
 		register.setOnAction(e -> 
 		{
 			if (createPasswordTF.getText().equals(confirmPasswordTF.getText()))
@@ -235,14 +226,22 @@ public class Project201 extends Application {
 
 					createMessage.setText("Success! User created.");
 					System.out.println("The passwords match.");
+					rUser = createUsernameTF.getText();
+					rPass = createPasswordTF.getText();
+					confirmPW = confirmPasswordTF.getText();
 					/*
 					 * TODO BackEnd - You're inside the section to register a new user. The
 					 * variables you need to register a new user here are:
+					 * 
 					 * rUser
 					 * rPass
 					 * 
 					 * 
 					 */
+					 /*
+					* TODO Frontend - If user inputs wrong username/password, prompt them
+					* to put in the username/pw again
+					*/
 					/*
 					 * Login.post( tablename, userstring, userpassword)
 					 * Backend done, this is posting the user's information to
@@ -257,6 +256,8 @@ public class Project201 extends Application {
 						Login.post("login", rUser, rPass);
 						System.out.println("Account created");
 					}
+					
+					System.out.println("rUser " + rUser + " rPass " + rPass);
 			} 
 			else {
 				createMessage.setText("The passwords do not match.");
