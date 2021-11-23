@@ -57,7 +57,7 @@ public class Login {
 	public static boolean onLogin(String table, String un, String pwd) {
 		String sql = "SELECT password FROM " + table + " WHERE username=?";
 		try (Connection conn = getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql);){
+                        PreparedStatement ps = conn.prepareStatement(sql);){
 			ps.setString(1, un);
 			ResultSet rs = ps.executeQuery();
 			
@@ -80,7 +80,7 @@ public class Login {
         {
             String sql = "SELECT * FROM " + table + " WHERE username=?";
             try(Connection conn = getConnection(); 
-                    PreparedStatement ps = conn.prepareStatement(sql);){
+                PreparedStatement ps = conn.prepareStatement(sql);){
                 ps.setString(1, un);
                 //checking if username already exists in database
                 ResultSet rs = ps.executeQuery();
