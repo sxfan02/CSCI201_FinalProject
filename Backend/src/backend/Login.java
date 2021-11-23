@@ -1,4 +1,3 @@
-package tainguye_CSCI201_Lab1;
 
 import java.util.*;
 import java.nio.charset.StandardCharsets;
@@ -7,10 +6,10 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
 
-public class Login {
+public class test {
 	public static void main(String args[]) throws Exception {
-		// post("login", "user2", "123456");
-		onLogin("login", "user2", "12345");
+		post("login", "user2", "123456");
+		//onLogin("login", "user2", "12345");
 		onLogin("login", "user2", "123456");
 	}
 	
@@ -19,7 +18,7 @@ public class Login {
 			String driver = "com.mysql.jdbc.Driver";
 			String url = "jdbc:mysql://localhost:3306/testdb";
 			String user = "root";
-			String pwd = "rootroot";
+			String pwd = "root";
 			
 			Connection connection = DriverManager.getConnection(url, user, pwd);
 			System.out.println("Connection established");
@@ -54,7 +53,7 @@ public class Login {
 				PreparedStatement ps = conn.prepareStatement(sql);){
 			ps.setString(1, un);
 			ps.setString(2, Hash(pwd));
-			
+			System.out.println(Hash(pwd));
 			int row = ps.executeUpdate();
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
@@ -67,9 +66,8 @@ public class Login {
 				PreparedStatement ps = conn.prepareStatement(sql);){
 			ps.setString(1, un);
 			ResultSet rs = ps.executeQuery();
-			
 			while (rs.next()) {
-				if (Hash(rs.getString("password")).equals(pwd)) {
+				if ((rs.getString("password")).equals(Hash(pwd))) {
 					System.out.println("Login success");
 					return true;
 				}
