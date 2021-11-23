@@ -18,6 +18,6 @@ public class LeaderboardServlet extends HttpServlet {
    public void doPost(HttpServletRequest request, HttpServletResponse response)
            throws ServletException, IOException
    {
-       Leaderboard.updateWinLoss("leaderboard", "earth", true);
+   
    }
 }

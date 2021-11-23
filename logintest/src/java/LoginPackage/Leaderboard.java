@@ -7,9 +7,9 @@ public class Leaderboard {
 
     public static Connection getConnection() {
 		try {
-                    String url = "jdbc:mysql://localhost:3306/logintest";
+                    String url = "jdbc:mysql://54.193.145.5:3306/CSCI201-Final-Project";
                     Class.forName("com.mysql.cj.jdbc.Driver");
-                    Connection connection = DriverManager.getConnection(url,"root","root");
+                    Connection connection = DriverManager.getConnection(url,"admin","CSCI201sucks!");
                     System.out.println("Connection established");
                     return connection;
 		} catch (Exception e) {
@@ -53,10 +53,10 @@ public class Leaderboard {
                 if (losses != null)
                 {
                     --losses;
+                    ps.setString(1 , losses.toString());
+                    ps.setString(2, un);
+                    int row = ps.executeUpdate();
                 }
-                System.out.println("Losses: " + losses);
-                ps.setString(1 , losses.toString());
-                ps.setString(2, un);
             }
             else 
             {
@@ -64,12 +64,13 @@ public class Leaderboard {
                 if (wins != null)
                 {
                     ++wins;
+                    ps.setString(1 , wins.toString());
+                    ps.setString(2, un);
+                    int row = ps.executeUpdate();
                 }
-                ps.setString(1 , wins.toString());
-                ps.setString(2, un);
             }
 
-            int row = ps.executeUpdate();
+            
 
         }
         catch (SQLException ex) {
