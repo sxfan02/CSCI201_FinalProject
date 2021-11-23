@@ -57,6 +57,7 @@ public class BackendPrototype extends Application {
 			}
 			winnerString = usernameString;
 			System.out.println("The winner is: " + winnerString);
+			//Test login
 			test.onLogin("login", usernameString, passwordString);
 		});
 		passwordPane.getChildren().add(enterButton);

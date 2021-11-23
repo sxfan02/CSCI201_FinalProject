@@ -6,10 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
 
-public class Login {
+public class test {
 	public static void main(String args[]) throws Exception {
-		//post("login", "check", "123456");
-		System.out.println(checkUserName("login", ""));
+		//post("login", "user2", "123456");
 		//onLogin("login", "user2", "12345");
 		//onLogin("login", "user2", "123456");
 	}
@@ -54,7 +53,7 @@ public class Login {
 				PreparedStatement ps = conn.prepareStatement(sql);){
 			ps.setString(1, un);
 			ps.setString(2, Hash(pwd));
-			//System.out.println(Hash(pwd));
+			System.out.println(Hash(pwd));
 			int row = ps.executeUpdate();
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
@@ -80,22 +79,7 @@ public class Login {
 		System.out.println("Login fail");
 		return false;
 	}
-	//Function checks if there exists a user in the database
-	public static boolean checkUserName(String table, String un) {
-		String sql = "SELECT username FROM " + table;
-		try (Connection conn = getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql);){
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				if ((rs.getString("username")).equals(un)) {
-					//System.out.println("Username already exists");
-					return true;
-				}
-			}
-		} catch (SQLException ex) {
-			System.out.println("SQLException: " + ex.getMessage());
-		}
-		return false;
-	}
+	
+	
 
 }
