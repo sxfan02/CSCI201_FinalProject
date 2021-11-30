@@ -443,7 +443,7 @@ public class Project201 extends Application {
 		 * 
 		 */
 		winnerString = usernameString;
-		
+		updateWinLoss("leaderboard", winnerString, true);
 	}
 	
 	public void chooseBanner() {
@@ -693,6 +693,58 @@ public class Project201 extends Application {
 	}
 }
 
+	public static Connection getConnection() {
+		try {
+			String url = "jdbc:mysql://54.193.145.5:3306/CSCI201-Final-Project";
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection connection = DriverManager.getConnection(url,"admin","CSCI201sucks!");
+			System.out.println("Connection established");
+			return connection;
+		} catch (Exception e) {
+			e.printStackTrace();
+	}
+
+	public static void updateWinLoss(String table, String un, boolean won) {
+		try {
+			Connection conn = getConnection();
+			String sql;
+			if (won == false)
+			{
+				sql = "UPDATE " + table + " SET losses=? WHERE username=?";
+			}
+			else
+			{
+				sql = "UPDATE " + table + " SET wins=? WHERE username=?";
+			}
+
+			PreparedStatement ps = conn.prepareStatement(sql);
+			if (won == false)
+			{
+				Integer losses = getLosses(table, un);
+				if (losses != null)
+				{
+					--losses;
+					ps.setString(1 , losses.toString());
+					ps.setString(2, un);
+					int row = ps.executeUpdate();
+				}
+			}
+			else
+			{
+				Integer wins = getWins(table, un);
+				if (wins != null)
+				{
+					++wins;
+					ps.setString(1 , wins.toString());
+					ps.setString(2, un);
+					int row = ps.executeUpdate();
+				}
+			}
+		}
+		catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage());
+		}
+	}
 
 /*
  * Finally, this section handles what happens when a registered user logs in
