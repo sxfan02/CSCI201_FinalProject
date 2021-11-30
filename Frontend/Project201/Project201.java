@@ -59,9 +59,13 @@ public class Project201 extends Application {
 	HBox h1, h2, h3, h4, h5, h6;
 	GridPane gp;
 	VBox v1, v2, v3;
-	String rUser = "", rPass ="", confirmPW = "";
+	String rUser = "", rPass ="", confirmPW = "", playerBanner = "";
+	ArrayList<String> deck = new ArrayList<String>();
 	ArrayList<Card> p1Tiles = new ArrayList<Card>();
 	ArrayList<Card> p2Tiles = new ArrayList<Card>();
+	String dir = "src/Project201Images/";
+	Card pos00;
+	boolean boolBuildTheBoard = true;
 	//Banners: U:Unknown P:Pink B:Blue G:Green R:Red
 	//Classes N:Necromancer K:Knight B:Barbarian R:Royalty M:Magician 
 	//Levels, 1-9 0 = 10 
@@ -97,6 +101,7 @@ public class Project201 extends Application {
 		gp = new GridPane();
 	    gp.setHgap(10);
 	    gp.setVgap(10);
+	    gp.setTranslateX(40);
 
 		v1 = new VBox(5); //left side of game
 		v2 = new VBox(5); //right side of game
@@ -111,7 +116,11 @@ public class Project201 extends Application {
 		stage.setTitle("Project 201");
 		stage.setScene(scene);
 		stage.show();
-
+		
+		/*****************************************************************************
+		 * *********************** splash screen *************************************
+		 * ***************************************************************************
+		 */
 		Label bannermen = new Label("       Bannermen");
 		introRoot.getChildren().add(bannermen);
 		bannermen.setMinWidth(50);
@@ -208,7 +217,10 @@ public class Project201 extends Application {
 		holdsHostClient.getChildren().add(clientButton);
 		hcPane.getChildren().add(holdsHostClient);
 
-		/*
+		
+		 /****************************************************************************
+		 *********************CREATING A NEW USER*************************************
+		 *****************************************************************************
 		 * This section handles the logic for creating a new user The main pain used
 		 * here is createNewUserPane
 		 */
@@ -278,13 +290,18 @@ public class Project201 extends Application {
 		createNewUserPane.getChildren().add(passh1);
 		createNewUserPane.getChildren().add(confh1);
 		createNewUserPane.getChildren().add(pictureh1);
+		
+		/***********************************************
+		 *             End creating new user 
+		 ************************************************
+		 */
 
 		stage.setOnCloseRequest((WindowEvent g) -> {
 			try {
-				send("close_program");
+				send("!close_program");
 				System.exit(0);
 			} catch (Exception e) {
-				System.out.println("Could not be stopped.");
+				System.out.println("Could not close.");
 			}
 		});
 
@@ -320,15 +337,10 @@ public class Project201 extends Application {
 		 * 0,4...1,4...2,4...3,4...4,4 Row four 
 		 * 0,5...1,5...2,5...3,5...4,5 Row five
 		 */
-		Card pos10 = new Card(gp, 1,0); 
-		pos10.setOnAction((ActionEvent event) -> 
+		pos00 = new Card(gp, 0,0); 
+		pos00.setOnAction((ActionEvent event) -> 
 		{
-
-		});
-		Card pos20 = new Card(gp, 2,0);
-		pos20.setOnAction((ActionEvent event) -> 
-		{
-
+			chooseBanner();
 		});
 		
 		for(int i=0; i<5; i++)
@@ -336,7 +348,7 @@ public class Project201 extends Application {
 				Card rowOne = new Card(gp, i, 1);
 				rowOne.setOnAction((ActionEvent event) -> 
 				{
-
+					System.out.println("Card name:" + rowOne.card_name);
 				});
 				p1Tiles.add(rowOne);
 		}
@@ -345,7 +357,7 @@ public class Project201 extends Application {
 				Card rowTwo = new Card(gp, i, 2);
 				rowTwo.setOnAction((ActionEvent event) -> 
 				{
-
+					System.out.println("Card name:" + rowTwo.card_name);
 				});
 				p1Tiles.add(rowTwo);
 		}
@@ -354,7 +366,7 @@ public class Project201 extends Application {
 				Card rowThree = new Card(gp, i, 3);
 				rowThree.setOnAction((ActionEvent event) -> 
 				{
-
+					System.out.println("Card name:" + rowThree.card_name);
 				});
 				p2Tiles.add(rowThree);
 		}
@@ -363,27 +375,32 @@ public class Project201 extends Application {
 				Card rowFour = new Card(gp, i, 4);
 				rowFour.setOnAction((ActionEvent event) -> 
 				{
-
+					System.out.println("Card name:" + rowFour.card_name);
 				});
 				p2Tiles.add(rowFour);
 		}
 		
-		Card pos15 = new Card(gp, 1,5); 
-		pos15.setOnAction((ActionEvent event) -> 
+		Card pos05 = new Card(gp, 0,5); 
+		pos05.setOnAction((ActionEvent event) -> 
 		{
 
 		});
-		Card pos25 = new Card(gp, 2,5);
-		pos25.setOnAction((ActionEvent event) -> 
-		{
-
-		});
-		
+	
 		//Deck Tile
 		Label deckLabel = new Label("Deck:");
 		deckLabel.setMinWidth(50);
 		Card deckTile = new Card();
 		deckTile.setGraphic("src/Project201Images/back.png");
+		deckTile.setOnAction((ActionEvent event) -> 
+		{
+			if(boolBuildTheBoard)
+			{
+				buildTheBoard();
+			}
+			else {
+				System.out.println("You can't build the board twice");
+			}
+		});
 		h3.getChildren().add(deckLabel);
 		h3.getChildren().add(deckTile);
 		
@@ -405,8 +422,6 @@ public class Project201 extends Application {
 		Label output = new Label("Sample output text");
 		h6.getChildren().add(output);
 		
-		
-		
 		//Initializations
 		v1.getChildren().add(gp);
 		v2.getChildren().add(h1);
@@ -418,23 +433,123 @@ public class Project201 extends Application {
 		v3.getChildren().add(h6);
 		gamePane.getChildren().add(v1);
 		gamePane.getChildren().add(v2);
-
+		
+		deck.addAll(new_deck);
+		Collections.shuffle(deck);
+		
+		/*
+		 * TODO backend 
+		 * Here is the place for the winner string
+		 * 
+		 */
+		winnerString = usernameString;
+		
 	}
-
+	
+	public void chooseBanner() {
+		Card green = new Card(gp, 1, 0);
+		green.setGraphic("src/Project201Images/Green.png");
+		Card red = new Card(gp, 2, 0);
+		red.setGraphic("src/Project201Images/Red.png");
+		Card pink = new Card(gp, 3, 0);
+		pink.setGraphic("src/Project201Images/Pink.png");
+		Card blue = new Card(gp, 4, 0);
+		blue.setGraphic("src/Project201Images/Blue.png");
+		
+		green.setOnAction((ActionEvent event) -> 
+		{
+			System.out.println("Green banner chosen");
+			pos00.setGraphic("src/Project201Images/Green.png");
+			playerBanner = "G";
+			send("!Banner_Chosen G");
+			gp.getChildren().remove(green);
+			gp.getChildren().remove(red);
+			gp.getChildren().remove(pink);
+			gp.getChildren().remove(blue);
+			
+		});
+		
+		red.setOnAction((ActionEvent event) -> 
+		{
+			System.out.println("Red banner chosen");
+			pos00.setGraphic("src/Project201Images/Red.png");
+			playerBanner = "R";
+			send("!Banner_Chosen R");
+			gp.getChildren().remove(green);
+			gp.getChildren().remove(red);
+			gp.getChildren().remove(pink);
+			gp.getChildren().remove(blue);
+			
+		});
+		pink.setOnAction((ActionEvent event) -> 
+		{
+			System.out.println("Pink banner chosen");
+			pos00.setGraphic("src/Project201Images/Pink.png");
+			playerBanner = "P";
+			send("!Banner_Chosen P");
+			gp.getChildren().remove(green);
+			gp.getChildren().remove(red);
+			gp.getChildren().remove(pink);
+			gp.getChildren().remove(blue);
+			
+		});
+		blue.setOnAction((ActionEvent event) -> 
+		{
+			System.out.println("Blue banner chosen");
+			pos00.setGraphic("src/Project201Images/Blue.png");
+			playerBanner = "B";
+			send("!Banner_Chosen B");
+			gp.getChildren().remove(green);
+			gp.getChildren().remove(red);
+			gp.getChildren().remove(pink);
+			gp.getChildren().remove(blue);
+			
+		});
+	}
+	
+	public void buildTheBoard()
+	{
+		Collections.shuffle(deck);
+		//Giving the players face down cards value
+		for(int i=0; i<p1Tiles.size(); i++)
+		{
+			String s = deck.get(i);
+			p1Tiles.get(i).card_name = s;
+			int index = i;
+			//p1Tiles.get(i).setGraphic("src/Project201Images/" + s + ".png");
+			//Sending the information to the other side
+			send("!p1_tiles" + " " + index + " " + s);
+			deck.remove(i);
+		}
+		//Giving the other players face down cards value
+		for(int i=0; i<p2Tiles.size(); i++)
+		{
+			String s = deck.get(i);
+			p2Tiles.get(i).card_name = s;
+			int index = i;
+			//p2Tiles.get(i).setGraphic("src/Project201Images/" + s + ".png");
+			//Sending the information to the other side
+			send("!p2_tiles" + " " + index + " " + s);
+			deck.remove(i);
+		}
+		boolBuildTheBoard = false;
+		send("!Build_the_board false");
+	}
+	
 	public class BuildHost extends Thread {
 		@Override
 		public void run() {
 			try {
 				ssocket = new ServerSocket(socketNumber);
-				addToConversation("Connection on socket: " + socketNumber);
+				sendAsChat("Connection on socket: " + socketNumber);
 				csocket = ssocket.accept();
-				addToConversation("Client connected");
+				sendAsChat("Client connected");
 				InputStream in = csocket.getInputStream();
 				myIn = new BufferedReader(new InputStreamReader(in));
 				String default_a = myIn.readLine();
-				addToConversation("Message:" + default_a);
+				sendAsChat("Message:" + default_a);
 				myOut = new PrintWriter(csocket.getOutputStream(), true);
-				addToConversation("Greetings!");
+				sendAsChat("Greetings!");
 				myOut.println("Greetings!");
 				myOut.flush();
 				listen = new Listener();
@@ -446,11 +561,11 @@ public class Project201 extends Application {
 	}
 
 	public void buildClient() {
-		addToConversation("client setup: starting ...");
+		sendAsChat("client setup: starting ...");
 		try {
-			addToConversation("Transmitting wtih: " + ip_address + "/" + socketNumber);
+			sendAsChat("Transmitting wtih: " + ip_address + "/" + socketNumber);
 			csocket = new Socket(ip_address, socketNumber);
-			addToConversation("Client connected.");
+			sendAsChat("Client connected.");
 			InputStream in = csocket.getInputStream();
 			myIn = new BufferedReader(new InputStreamReader(in));
 			myOut = new PrintWriter(csocket.getOutputStream(), true);
@@ -458,14 +573,14 @@ public class Project201 extends Application {
 			myOut.flush();
 			String line;
 			line = myIn.readLine();
-			addToConversation(line);
+			sendAsChat(line);
 			startTHISend();
 
 			listen = new Listener();
 			listen.start();
 
 		} catch (Exception e) {
-			addToConversation("client setup error e=" + e);
+			sendAsChat("client setup error e=" + e);
 		}
 	}
 
@@ -475,11 +590,12 @@ public class Project201 extends Application {
 		h2.getChildren().add(talker);
 		talker.setOnAction(g -> {
 			String s = talker.getText();
-			addToConversation("me: " + s);
+			sendAsChat("me: " + s);
 			send(s);
 			talker.setText("");
 		});
 	}
+	
 
 	public class Listener extends Thread {
 		@Override
@@ -489,20 +605,49 @@ public class Project201 extends Application {
 					String s = myIn.readLine(); // hangs for input
 					StringTokenizer len = new StringTokenizer(s);
 					String phrase = len.nextToken();
-					if (s.equals("close_program")) {
+					if (s.equals("!close_program")) {
 						System.exit(0);
-					} else {
-						addToConversation("you: " + s);
+					}
+					else if(phrase.equals("!p1_tiles"))
+					{
+						Platform.runLater( ()->{
+							String i = len.nextToken();
+							int index = Integer.parseInt(i);
+							String card = len.nextToken();
+							p1Tiles.get(index).setCard_Name(card);
+							//p1Tiles.get(index).setGraphic("src/Project201Images/" + card + ".png");
+						});
+						
+					}
+					else if(phrase.equals("!p2_tiles"))
+					{
+						Platform.runLater( ()->{
+							String i = len.nextToken();
+							int index = Integer.parseInt(i);
+							String card = len.nextToken();
+							p2Tiles.get(index).setCard_Name(card);
+							//p2Tiles.get(index).setGraphic("src/Project201Images/" + card + ".png");
+						});
+					}
+					else if(phrase.equals("!Build_the_board"))
+					{
+						Platform.runLater( ()->{
+							boolBuildTheBoard = false;
+						});
+					}
+					else 
+					{
+						sendAsChat("you: " + s);
 					}
 				} catch (Exception h) {
-					addToConversation("couldn't read from the other end");
+					sendAsChat("couldn't read from the other end");
 				}
 			}
 		}
 	}
 
 // add this string to the conversation.
-	public void addToConversation(String words) {
+	public void sendAsChat(String words) {
 		toBeSent += words + "\n";
 		readChatBox.setText(toBeSent);
 		writeTextBox.setVvalue(1.0);
