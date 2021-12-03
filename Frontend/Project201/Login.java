@@ -1,4 +1,4 @@
-
+package Project201;
 import java.util.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -8,7 +8,7 @@ import java.sql.*;
 
 public class Login {
 	public static void main(String args[]) throws Exception {
-		//post("login", "check", "123456");
+		post("users", "check", "123456");
 		//System.out.println(checkUserName("login", ""));
 		//onLogin("login", "user2", "12345");
 		//onLogin("login", "user2", "123456");

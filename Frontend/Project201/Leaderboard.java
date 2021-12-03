@@ -1,5 +1,4 @@
-//package LoginPackage;
-
+package Project201;
 import java.sql.*;
 
 
@@ -117,6 +116,21 @@ public class Leaderboard {
         }
         return null;
     }
-            
+    public static boolean checkUserName(String table, String un) {
+		String sql = "SELECT username FROM " + table;
+		try (Connection conn = getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);){
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				if ((rs.getString("username")).equals(un)) {
+					//System.out.println("Username already exists");
+					return true;
+				}
+			}
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage());
+		}
+		return false;
+	}       
 }
 

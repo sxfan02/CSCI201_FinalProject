@@ -67,7 +67,7 @@ public class Project201 extends Application {
 	ArrayList<Card> p1Tiles = new ArrayList<Card>();
 	ArrayList<Card> p2Tiles = new ArrayList<Card>();
 	String dir = "src/Project201Images/", discardName = "empty";
-	Card pos00, pos05, discardTile;
+	Card pos00, pos05, discardTile, deckTile;
 	int counterp1 = 0, counterp2 = 0;
 	boolean boolBuildTheBoard = true, p1Turn = false, p2Turn = false, p1FirstTurn = true, p2FirstTurn = true, host = false;
 	// Banners: U:Unknown P:Pink B:Blue G:Green R:Red
@@ -153,7 +153,13 @@ public class Project201 extends Application {
 			 */
 			usernameString = usernameTF.getText();
 			passwordString = passwordTF.getText();
-			scene.setRoot(hcPane);
+			if(!Login.onLogin("users", usernameString, passwordString)) {
+				usernameString = usernameTF.getText();
+				passwordString = passwordTF.getText();
+			}
+			else {
+				scene.setRoot(hcPane);
+			}
 		});
 
 		Button guestButton = new Button("Guest");
@@ -255,7 +261,10 @@ public class Project201 extends Application {
 		confh1.getChildren().add(register);
 		register.setOnAction(e -> {
 			if (createPasswordTF.getText().equals(confirmPasswordTF.getText())) {
-
+				rUser = createUsernameTF.getText();
+				rPass = createPasswordTF.getText();
+				confirmPW = confirmPasswordTF.getText();
+				
 				createMessage.setText("Success! User created.");
 				System.out.println("The passwords match.");
 
@@ -268,7 +277,21 @@ public class Project201 extends Application {
 				 * 
 				 * 
 				 */
-				System.out.println("rUser " + rUser + " rPass " + rPass);
+				if(Login.checkUserName("users", rUser) == true || rUser.equals("guest")) {
+					if(Login.checkUserName("users", rUser) == true)
+						System.out.println(rUser + " already exists");
+						createMessage.setText(rUser + " already exists");
+					if(rUser.equals("guest"))
+						System.out.println("You can't be guest.");
+						createMessage.setText("You can't be guest.");
+					//reateMessage.setText("Username already exists");
+				}
+				else {
+					Login.post("users", rUser, rPass);
+					//Leaderboard.post("leaderboard", rUser, "0", "0");
+					System.out.println("Account created");
+					createMessage.setText("Account created");
+				}
 			} else {
 				createMessage.setText("The passwords do not match.");
 			}
@@ -408,7 +431,7 @@ public class Project201 extends Application {
 		// Deck Tile
 		Label deckLabel = new Label("Deck:");
 		deckLabel.setMinWidth(50);
-		Card deckTile = new Card();
+		deckTile = new Card();
 		deckTile.setGraphic("src/Project201Images/back.png");
 		deckTile.setOnAction((ActionEvent event) -> 
 		{
@@ -505,8 +528,10 @@ public class Project201 extends Application {
 		if(checkWinCondition())
 		{
 			send("!Game_over");
+			System.out.println("Check win condition cleared");
 			if(host)
 			{
+				System.out.println("host cleared");
 				outputWinner();	
 			}
 		}
@@ -521,7 +546,7 @@ public class Project201 extends Application {
 		{
 			if(p1t.getActivated() == true)
 			{
-				activep1++;
+				activep1++;	
 			}
 		}
 		for(Card p2t: p2Tiles)
@@ -538,6 +563,7 @@ public class Project201 extends Application {
 				win = true;
 			}
 		}
+		System.out.println("activep1: " + activep1 + " activep2: " + activep2);
 		return win;
 	}
 
@@ -743,6 +769,8 @@ public class Project201 extends Application {
 		{
 			winnerString = player1;
 			loserString = player2;
+			send("Top wins!");
+			send("!winner" + " " + "Top");
 			System.out.println("Player 1 wins!: " + winnerString);
 			System.out.println("Player 2 loses!: " + loserString);
 		}
@@ -750,6 +778,8 @@ public class Project201 extends Application {
 		{
 			winnerString = player2;
 			loserString = player1;
+			send("Bottom wins!");
+			send("!winner" + " " + "Bottom");
 			System.out.println("Player 2 wins!: " + winnerString);
 			System.out.println("Player 1 loses!: " + loserString);
 		}
@@ -760,6 +790,8 @@ public class Project201 extends Application {
 			{
 				winnerString = player1;
 				loserString = player2;
+				send("Top wins!");
+				send("!winner" + " " + "Top");
 				send("Top player wins on tie breaker coin flip!");
 				System.out.println("Player 1 wins!: " + winnerString);
 				System.out.println("Player 2 loses!: " + loserString);
@@ -768,6 +800,8 @@ public class Project201 extends Application {
 			{
 				winnerString = player2;
 				loserString = player1;
+				send("!winner" + " " + "Bottom");
+				send("Bottom wins!");
 				send("Bottom player wins on tie breaker coin flip!");
 				System.out.println("Player 2 wins!: " + winnerString);
 				System.out.println("Player 1 loses!: " + loserString);
@@ -775,9 +809,28 @@ public class Project201 extends Application {
 		}
 		if(!usernameString.equals("guest"))
 		{
+			send("!winner" +" " +  winnerString); //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+			send(winnerString + " wins!");
 			//If the user is not a guest then we will push the scores here 
-			
+			Leaderboard.updateWinLoss("leaderboard", winnerString, true);
+			if(Leaderboard.getLosses("leaderboard", loserString) > 0) {
+				Leaderboard.updateWinLoss("leaderboard", loserString, false);
+			}
 		}
+		else {
+			System.out.println("The user is guest");
+		}
+		
+		for (Card obj : p1Tiles) {
+			disable(obj);
+		}
+		for (Card obj : p2Tiles) {
+			disable(obj);
+		}
+		disable(pos00);
+		disable(pos05);
+		disable(discardTile);
+		disable(deckTile);
 	}
 
 	public void buildTheBoard() {
@@ -837,6 +890,7 @@ public class Project201 extends Application {
 				listen.start();
 				player1 = usernameString;
 				host = true;
+				System.out.println("I am the host");
 			} catch (Exception e) {
 				System.out.println("socket open error e=" + e);
 			}
@@ -925,7 +979,8 @@ public class Project201 extends Application {
 							String word3 = len.nextToken(); // index
 							String word4 = len.nextToken(); // obj.card_name
 							int index = Integer.parseInt(word3);
-							if (word2.equals("p1")) {
+							if (word2.equals("p1")) 
+							{
 								p1Tiles.get(index).setGraphic("src/Project201Images/" + word4 + ".png");
 								p1Tiles.get(index).setCard_Name(word4);
 								p1Tiles.get(index).setActivated(true);
@@ -999,26 +1054,48 @@ public class Project201 extends Application {
 							discardTile.setGraphic("src/Project201Images/back.png");
 						});
 					}
-					else if (phrase.equals("!Game_over")) {
-						Platform.runLater(() -> 
-						{
-							//outputWinner();
-						});
-					}
 					else if (phrase.equals("!who_is_player2?"))
 					{
 						Platform.runLater(() -> 
 						{
-							send("!Player2:" + " " + player2);
+							send("!Player2:" + " " + usernameString);
 						});
 					}
 					else if (phrase.equals("!Player2:"))
 					{
 						Platform.runLater(() -> 
 						{
-							send("!Player2:" + " " + player2);
+							//send("!Player2:" + " " + player2);
 							String word2 = len.nextToken(); // "p1"
 							player2 = word2;
+						});
+					}
+					else if(phrase.equals("!Game_over"))  
+					{
+						Platform.runLater(() -> 
+						{
+							if(host)
+							{
+								outputWinner();	
+							}
+						});
+					}
+					else if(phrase.equals("!winner"))  
+					{
+						Platform.runLater(() -> 
+						{
+							String word2 = len.nextToken(); 
+							send(word2 + " wins!");
+							for (Card obj : p1Tiles) {
+								disable(obj);
+							}
+							for (Card obj : p2Tiles) {
+								disable(obj);
+							}
+							disable(pos00);
+							disable(pos05);
+							disable(discardTile);
+							disable(deckTile);
 						});
 					}
 //					else if (phrase.equals("!Top_p_wins")) {
