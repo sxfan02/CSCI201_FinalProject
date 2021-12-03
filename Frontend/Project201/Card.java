@@ -19,7 +19,7 @@ public class Card extends Button
 	String power = "";
 	String banner = "";
 	String unit_type = "";
-
+	Boolean activated = false;
 	File file;
 	
 	Card(GridPane root, int x, int y)
@@ -74,5 +74,11 @@ public class Card extends Button
 	}
 	public void setUnit_type(String unit_type) {
 		this.unit_type = unit_type;
+	}
+	public Boolean getActivated() {
+		return activated;
+	}
+	public void setActivated(Boolean activated) {
+		this.activated = activated;
 	}
 }
