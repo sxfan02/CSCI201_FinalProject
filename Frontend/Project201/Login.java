@@ -9,27 +9,24 @@ import java.sql.*;
 public class Login {
 	public static void main(String args[]) throws Exception {
 		//post("login", "check", "123456");
-		System.out.println(checkUserName("login", ""));
+		//System.out.println(checkUserName("login", ""));
 		//onLogin("login", "user2", "12345");
 		//onLogin("login", "user2", "123456");
 	}
 	
 	public static Connection getConnection() {
-		try {
-			String driver = "com.mysql.jdbc.Driver";
-			String url = "jdbc:mysql://localhost:3306/testdb";
-			String user = "root";
-			String pwd = "root";
-			
-			Connection connection = DriverManager.getConnection(url, user, pwd);
-			System.out.println("Connection established");
-			return connection;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
+        try {
+                    String url = "jdbc:mysql://54.193.145.5:3308/CSCI201-Final-Project";
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection connection = DriverManager.getConnection(url,"admin","TaiLicksNuts!");
+                    System.out.println("Connection established");
+                    return connection;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 	public static String Hash(String pwd) {
 		MessageDigest md;
 		StringBuilder sb = new StringBuilder();
