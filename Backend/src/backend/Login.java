@@ -56,9 +56,10 @@ public class Login {
 			ps.setString(2, Hash(pwd));
 			//System.out.println(Hash(pwd));
 			int row = ps.executeUpdate();
+			Leaderboard.post("leaderboard", un, "0", "0");
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
-		} 
+		}
 	}
 	
 	public static boolean onLogin(String table, String un, String pwd) {

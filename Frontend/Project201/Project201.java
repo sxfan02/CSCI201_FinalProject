@@ -443,7 +443,7 @@ public class Project201 extends Application {
 		 * 
 		 */
 		winnerString = usernameString;
-		updateWinLoss("leaderboard", winnerString, true);
+		Leaderboard.updateWinLoss("leaderboard", winnerString, true);
 	}
 	
 	public void chooseBanner() {
