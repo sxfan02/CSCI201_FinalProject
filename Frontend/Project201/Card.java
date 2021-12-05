@@ -24,13 +24,13 @@ public class Card extends Button
 	
 	Card(GridPane root, int x, int y)
 	{
-		this.setGraphic("src/Project201Images/back.png");
+		this.setGraphic("back.png");
 		//this.setMaxSize(150, 50);
 		root.add(this, x, y); 
 	}
 	Card()
 	{
-		this.setGraphic("src/Project201Images/back.png");
+		this.setGraphic("back.png");
 		//this.setMaxSize(150, 50);
 	}
 	
@@ -39,12 +39,10 @@ public class Card extends Button
 	 */
 	public void setGraphic(String name)
 	{
-		file = new File(name);
-		Image image = new Image(file.toURI().toString());
-		ImageView iv = new ImageView();
+	    Image image = ResourceLoader.loadImage(name);
+	    ImageView iv = new ImageView(image);
 	    iv.setFitHeight(85);
 	    iv.setFitWidth(60);
-		iv.setImage(image);
 		this.setGraphic(iv);
 	}
 	/*

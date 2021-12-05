@@ -66,7 +66,7 @@ public class Project201 extends Application {
 	ArrayList<String> deck = new ArrayList<String>();
 	ArrayList<Card> p1Tiles = new ArrayList<Card>();
 	ArrayList<Card> p2Tiles = new ArrayList<Card>();
-	String dir = "src/Project201Images/", discardName = "empty";
+	String discardName = "empty";
 	Card pos00, pos05, discardTile, deckTile;
 	int counterp1 = 0, counterp2 = 0;
 	boolean boolBuildTheBoard = true, p1Turn = false, p2Turn = false, p1FirstTurn = true, p2FirstTurn = true, host = false;
@@ -207,7 +207,7 @@ public class Project201 extends Application {
 		 * This section handles the logic for host or client
 		 */
 		Label imgLabel = new Label();
-		setLabelGraphic(imgLabel, "src/Project201Images/banner.png");
+		setLabelGraphic(imgLabel, "banner.png");
 		Label welcomeLabel = new Label("Welcome, please select host or client.");
 		Font font2 = Font.font("Tahoma", FontWeight.BOLD, FontPosture.ITALIC, 12);
 		welcomeLabel.setFont(font2);
@@ -298,7 +298,7 @@ public class Project201 extends Application {
 		});
 
 		Label imgLabel2 = new Label();
-		setLabelGraphic(imgLabel2, "src/Project201Images/tree.png");
+		setLabelGraphic(imgLabel2, "tree.png");
 		pictureh1.getChildren().add(imgLabel2);
 		pictureh1.setAlignment(Pos.CENTER);
 
@@ -336,7 +336,7 @@ public class Project201 extends Application {
 		toBeSent = "";
 
 		Label gameLogo = new Label();
-		setLabelGraphic(gameLogo, "src/Project201Images/bannermen.png");
+		setLabelGraphic(gameLogo, "bannermen.png");
 		v1.getChildren().add(gameLogo);
 		gameLogo.setMinWidth(500);
 		v1.setMinWidth(500);
@@ -354,7 +354,7 @@ public class Project201 extends Application {
 		 * 0,5...1,5...2,5...3,5...4,5 Row five
 		 */
 		pos00 = new Card(gp, 0, 0);
-		pos00.setGraphic("src/Project201Images/bannerspile.png");
+		pos00.setGraphic("bannerspile.png");
 		pos00.setOnAction((ActionEvent event) -> {
 			chooseBannerP1();
 		});
@@ -385,7 +385,7 @@ public class Project201 extends Application {
 			obj.setOnAction((ActionEvent event) -> {
 				if (p1FirstTurn) {
 					if (counterp1 < 3) {
-						obj.setGraphic("src/Project201Images/" + obj.card_name + ".png");
+						obj.setGraphic(obj.card_name + ".png");
 						obj.setActivated(true);
 						send("!Card_flipped" + " " + "p1" + " " + index + " " + obj.card_name);
 						counterp1++;
@@ -407,7 +407,7 @@ public class Project201 extends Application {
 			obj.setOnAction((ActionEvent event) -> {
 				if (p2FirstTurn) {
 					if (counterp2 < 3) {
-						obj.setGraphic("src/Project201Images/" + obj.card_name + ".png");
+						obj.setGraphic(obj.card_name + ".png");
 						obj.setActivated(true);
 						send("!Card_flipped" + " " + "p2" + " " + index + " " + obj.card_name);
 						counterp2++;
@@ -423,7 +423,7 @@ public class Project201 extends Application {
 		}
 
 		pos05 = new Card(gp, 0, 5);
-		pos05.setGraphic("src/Project201Images/bannerspile.png");
+		pos05.setGraphic("bannerspile.png");
 		pos05.setOnAction((ActionEvent event) -> {
 			chooseBannerP2();
 		});
@@ -432,7 +432,7 @@ public class Project201 extends Application {
 		Label deckLabel = new Label("Deck:");
 		deckLabel.setMinWidth(50);
 		deckTile = new Card();
-		deckTile.setGraphic("src/Project201Images/back.png");
+		deckTile.setGraphic("back.png");
 		deckTile.setOnAction((ActionEvent event) -> 
 		{
 			// Builds the board exactly once and stops the other play from pressing it
@@ -445,12 +445,16 @@ public class Project201 extends Application {
 				System.out.println("You can't build the board twice");
 			}
 			String draw = deck.get(0);
-			System.out.println(draw);
 			discardTile.setCard_Name(draw);
-			discardTile.setGraphic("src/Project201Images/" + draw + ".png");
+			discardTile.setGraphic(draw + ".png");
 			send("!Remove" + " " + draw);
 			send("!Set_discard" + " " + draw);
 			deck.remove(draw);
+			
+			/*
+			 * Test: Ensuring values of cards when they are face down
+			 */
+			test1();
 		});
 		h3.getChildren().add(deckLabel);
 		h3.getChildren().add(deckTile);
@@ -459,10 +463,9 @@ public class Project201 extends Application {
 		Label discardLabel = new Label("Discard:");
 		discardLabel.setMinWidth(50);
 		discardTile = new Card();
-		discardTile.setGraphic("src/Project201Images/back.png");
+		discardTile.setGraphic("back.png");
 		discardTile.setOnAction((ActionEvent event) -> {
 			discardName = discardTile.getCard_Name();
-			System.out.println(discardName);
 		});
 		h4.getChildren().add(discardLabel);
 		h4.getChildren().add(discardTile);
@@ -513,15 +516,15 @@ public class Project201 extends Application {
 		if (!discardName.equals("empty")) 
 		{
 			obj.setCard_Name(discardName);
-			obj.setGraphic("src/Project201Images/" + obj.card_name + ".png");
+			obj.setGraphic(obj.card_name + ".png");
 			discardName = "empty";
 			discardTile.setCard_Name("empty");
-			discardTile.setGraphic("src/Project201Images/back.png");
+			discardTile.setGraphic("back.png");
 			send("!Card_flipped" + " " + p + " " + index + " " + obj.card_name);
 			send("!Remove_discard");
 		}
 		else{
-			obj.setGraphic("src/Project201Images/" + obj.card_name + ".png");
+			obj.setGraphic(obj.card_name + ".png");
 			obj.setActivated(true);
 			send("!Card_flipped" + " " + p + " " + index + " " + obj.card_name);
 		}
@@ -563,22 +566,24 @@ public class Project201 extends Application {
 				win = true;
 			}
 		}
-		System.out.println("activep1: " + activep1 + " activep2: " + activep2);
+		
+		System.out.println("Player 1 active tiles: " + activep1);
+		System.out.println("Player 2 active tiles: " + activep2);
 		return win;
 	}
 
 	public void chooseBannerP1() {
 		Card green = new Card(gp, 1, 0);
-		green.setGraphic("src/Project201Images/Green.png");
+		green.setGraphic("Green.png");
 		Card red = new Card(gp, 2, 0);
-		red.setGraphic("src/Project201Images/Red.png");
+		red.setGraphic("Red.png");
 		Card pink = new Card(gp, 3, 0);
-		pink.setGraphic("src/Project201Images/Pink.png");
+		pink.setGraphic("Pink.png");
 		Card blue = new Card(gp, 4, 0);
-		blue.setGraphic("src/Project201Images/Blue.png");
+		blue.setGraphic("Blue.png");
 		green.setOnAction((ActionEvent event) -> {
 			System.out.println("Green banner chosen");
-			pos00.setGraphic("src/Project201Images/Green.png");
+			pos00.setGraphic("Green.png");
 			p1Banner = "G";
 			send("!Banner_chosen P1 G");
 			gp.getChildren().remove(green);
@@ -590,7 +595,7 @@ public class Project201 extends Application {
 		});
 		red.setOnAction((ActionEvent event) -> {
 			System.out.println("Red banner chosen");
-			pos00.setGraphic("src/Project201Images/Red.png");
+			pos00.setGraphic("Red.png");
 			p1Banner = "R";
 			send("!Banner_chosen P1 R");
 			gp.getChildren().remove(green);
@@ -602,7 +607,7 @@ public class Project201 extends Application {
 		});
 		pink.setOnAction((ActionEvent event) -> {
 			System.out.println("Pink banner chosen");
-			pos00.setGraphic("src/Project201Images/Pink.png");
+			pos00.setGraphic("Pink.png");
 			p1Banner = "P";
 			send("!Banner_chosen P1 P");
 			gp.getChildren().remove(green);
@@ -614,7 +619,7 @@ public class Project201 extends Application {
 		});
 		blue.setOnAction((ActionEvent event) -> {
 			System.out.println("Blue banner chosen");
-			pos00.setGraphic("src/Project201Images/Blue.png");
+			pos00.setGraphic("Blue.png");
 			p1Banner = "B";
 			send("!Banner_chosen P1 B");
 			gp.getChildren().remove(green);
@@ -628,17 +633,17 @@ public class Project201 extends Application {
 
 	public void chooseBannerP2() {
 		Card green = new Card(gp, 1, 5);
-		green.setGraphic("src/Project201Images/Green.png");
+		green.setGraphic("Green.png");
 		Card red = new Card(gp, 2, 5);
-		red.setGraphic("src/Project201Images/Red.png");
+		red.setGraphic("Red.png");
 		Card pink = new Card(gp, 3, 5);
-		pink.setGraphic("src/Project201Images/Pink.png");
+		pink.setGraphic("Pink.png");
 		Card blue = new Card(gp, 4, 5);
-		blue.setGraphic("src/Project201Images/Blue.png");
+		blue.setGraphic("Blue.png");
 
 		green.setOnAction((ActionEvent event) -> {
 			System.out.println("Green banner chosen");
-			pos05.setGraphic("src/Project201Images/Green.png");
+			pos05.setGraphic("Green.png");
 			p2Banner = "G";
 			send("!Banner_chosen P2 G");
 			gp.getChildren().remove(green);
@@ -650,7 +655,7 @@ public class Project201 extends Application {
 		});
 		red.setOnAction((ActionEvent event) -> {
 			System.out.println("Red banner chosen");
-			pos05.setGraphic("src/Project201Images/Red.png");
+			pos05.setGraphic("Red.png");
 			p2Banner = "R";
 			send("!Banner_chosen P2 R");
 			gp.getChildren().remove(green);
@@ -662,7 +667,7 @@ public class Project201 extends Application {
 		});
 		pink.setOnAction((ActionEvent event) -> {
 			System.out.println("Pink banner chosen");
-			pos05.setGraphic("src/Project201Images/Pink.png");
+			pos05.setGraphic("Pink.png");
 			p2Banner = "P";
 			send("!Banner_chosen P2 P");
 			gp.getChildren().remove(green);
@@ -674,7 +679,7 @@ public class Project201 extends Application {
 		});
 		blue.setOnAction((ActionEvent event) -> {
 			System.out.println("Blue banner chosen");
-			pos05.setGraphic("src/Project201Images/Blue.png");
+			pos05.setGraphic("Blue.png");
 			p2Banner = "B";
 			send("!Banner_chosen P2 B");
 			gp.getChildren().remove(green);
@@ -742,7 +747,6 @@ public class Project201 extends Application {
 				p2LaneSum += 3;
 			}
 		}
-		System.out.println("p1LaneSum: " + p1LaneSum + " p2LaneSum: " + p2LaneSum);
 		if(p1LaneSum > p2LaneSum)
 		{
 			p1LaneWins++;
@@ -919,7 +923,86 @@ public class Project201 extends Application {
 			sendAsChat("client setup error e=" + e);
 		}
 	}
-
+	
+	/*
+	 * Testing method to test that face down cards have a value. Returns true if all cases are valid. 
+	 */
+	public boolean test1() 
+	{
+		boolean check = true;
+		System.out.println("Player 1 card values:");
+		int c1 =0, c2=0;
+		for(Card obj: p1Tiles)
+		{
+			System.out.println("Card value at index: " + c1++ +" "+ obj.card_name);
+			if(obj.card_name.equals(""))
+			{
+				check = false;
+			}
+		}
+		System.out.println("Player 2 card values:");
+		for(Card obj: p2Tiles)
+		{
+			System.out.println("Card value at index: " + c2++ +" " + obj.card_name);
+			if(obj.card_name.equals(""))
+			{
+				check = false;
+			}
+		}
+		return check;
+	}
+	/*
+	 * Testing that each card is marked as actively played when it is clicked and that this status is permanent returns true if cards that should be activated are activated.
+	 */
+	public boolean test2(int x, int y)
+	{
+		boolean check = true;
+		int count_p1 = 0;
+		int count_p2 = 0;
+		for(Card obj: p1Tiles)
+		{
+			if(obj.getActivated() == true)
+			{
+				count_p1++;
+			}
+		}
+		for(Card obj: p2Tiles)
+		{
+			if(obj.getActivated() == true)
+			{
+				count_p2++;
+			}
+		}
+		
+		if(x != count_p1)
+		{
+			check = false;
+		}
+		if(y != count_p1)
+		{
+			check = false;
+		}
+		return check;
+	}
+	/*
+	 * Ensures that banner calculations are considered in final damage output. 
+	 */
+	public void test3() 
+	{
+		p1Banner = "B";
+		p2Banner = "R";
+		for(Card obj: p1Tiles)
+		{
+			obj.setCard_Name("4BK");
+			obj.setActivated(true);
+		}
+		for(Card obj: p2Tiles)
+		{
+			obj.setCard_Name("4RK");
+			obj.setActivated(true);
+		}
+		outputWinner();
+	}
 	public void startTHISend() {
 		h2.getChildren().clear();
 		talker = new TextField();
@@ -970,7 +1053,7 @@ public class Project201 extends Application {
 						Platform.runLater(() -> {
 							String word = len.nextToken();
 							discardTile.setCard_Name(word);
-							discardTile.setGraphic("src/Project201Images/" + word + ".png");
+							discardTile.setGraphic(word + ".png");
 						});
 					}
 					else if (phrase.equals("!Card_flipped")) {
@@ -981,12 +1064,12 @@ public class Project201 extends Application {
 							int index = Integer.parseInt(word3);
 							if (word2.equals("p1")) 
 							{
-								p1Tiles.get(index).setGraphic("src/Project201Images/" + word4 + ".png");
+								p1Tiles.get(index).setGraphic(word4 + ".png");
 								p1Tiles.get(index).setCard_Name(word4);
 								p1Tiles.get(index).setActivated(true);
 
 							} else if (word2.equals("p2")) {
-								p2Tiles.get(index).setGraphic("src/Project201Images/" + word4 + ".png");
+								p2Tiles.get(index).setGraphic(word4 + ".png");
 								p2Tiles.get(index).setCard_Name(word4);
 								p2Tiles.get(index).setActivated(true);
 							}
@@ -1009,39 +1092,38 @@ public class Project201 extends Application {
 						Platform.runLater(() -> {
 							String word2 = len.nextToken(); // "p1"
 							String word3 = len.nextToken(); // P
-							System.out.println("Word2: " + word2 + "Word3: " + word3);
 							if (word2.equals("P1")) {
 								if (word3.equals("P")) {
-									pos00.setGraphic("src/Project201Images/Pink.png");
+									pos00.setGraphic("Pink.png");
 									p1Banner = "P";
 								}
 								if (word3.equals("R")) {
-									pos00.setGraphic("src/Project201Images/Red.png");
+									pos00.setGraphic("Red.png");
 									p1Banner = "R";
 								}
 								if (word3.equals("G")) {
-									pos00.setGraphic("src/Project201Images/Green.png");
+									pos00.setGraphic("Green.png");
 									p1Banner = "G";
 								}
 								if (word3.equals("B")) {
-									pos00.setGraphic("src/Project201Images/Blue.png");
+									pos00.setGraphic("Blue.png");
 									p2Banner = "B";
 								}
 							} else if (word2.equals("P2")) {
 								if (word3.equals("P")) {
-									pos05.setGraphic("src/Project201Images/Pink.png");
+									pos05.setGraphic("Pink.png");
 									p2Banner = "P";
 								}
 								if (word3.equals("R")) {
-									pos05.setGraphic("src/Project201Images/Red.png");
+									pos05.setGraphic("Red.png");
 									p2Banner = "R";
 								}
 								if (word3.equals("G")) {
-									pos05.setGraphic("src/Project201Images/Green.png");
+									pos05.setGraphic("Green.png");
 									p2Banner = "G";
 								}
 								if (word3.equals("B")) {
-									pos05.setGraphic("src/Project201Images/Blue.png");
+									pos05.setGraphic("Blue.png");
 									p2Banner = "B";
 								}
 							}
@@ -1051,7 +1133,7 @@ public class Project201 extends Application {
 						Platform.runLater(() -> {
 							discardName = "empty";
 							discardTile.setCard_Name("empty");
-							discardTile.setGraphic("src/Project201Images/back.png");
+							discardTile.setGraphic("back.png");
 						});
 					}
 					else if (phrase.equals("!who_is_player2?"))
@@ -1098,33 +1180,6 @@ public class Project201 extends Application {
 							disable(deckTile);
 						});
 					}
-//					else if (phrase.equals("!Top_p_wins")) {
-//						Platform.runLater(() -> 
-//						{
-//							winnerString = player1;
-//							System.out.println("The winner is: " + winnerString);
-//							loserString = player2;
-//							System.out.println("The loser is: " +  loserString);
-//							send("!Bottom_p_wins");
-//						});
-//					}
-//					else if (phrase.equals("!Bottom_p_wins")) {
-//						Platform.runLater(() -> 
-//						{
-//							winnerString = player2;
-//							System.out.println("The winner is: " +  winnerString);
-//							loserString = player1;
-//							System.out.println("The loser is: " +  loserString);
-//							send("!Bottom_p_wins");
-//						});
-//					}
-//					else if (phrase.equals("!Player2")) {
-//						Platform.runLater(() -> 
-//						{
-//							player2 = usernameString;
-//							System.out.println("Player 2 is: " + usernameString);
-//						});
-//					}
 					else {
 						sendAsChat("chat: " + s);
 					}
@@ -1150,18 +1205,14 @@ public class Project201 extends Application {
 	}
 
 	public void setLabelGraphic(Label label, String name) {
-		File file = new File(name);
-		Image image = new Image(file.toURI().toString());
-		ImageView iv = new ImageView();
-		iv.setImage(image);
+	    Image image = ResourceLoader.loadImage(name);
+	    ImageView iv = new ImageView(image);
 		label.setGraphic(iv);
 	}
 
 	public void setButtonGraphic(Button button, String name) {
-		File file = new File(name);
-		Image image = new Image(file.toURI().toString());
-		ImageView iv = new ImageView();
-		iv.setImage(image);
+	    Image image = ResourceLoader.loadImage(name);
+	    ImageView iv = new ImageView(image);
 		button.setGraphic(iv);
 	}
 
@@ -1177,4 +1228,3 @@ public class Project201 extends Application {
 		}
 	}
 }
-// ###########################################################################################################################################################################################################################################################
