@@ -19,18 +19,18 @@ public class Card extends Button
 	String power = "";
 	String banner = "";
 	String unit_type = "";
-
+	Boolean activated = false;
 	File file;
 	
 	Card(GridPane root, int x, int y)
 	{
-		this.setGraphic("src/Project201Images/back.png");
+		this.setGraphic("back.png");
 		//this.setMaxSize(150, 50);
 		root.add(this, x, y); 
 	}
 	Card()
 	{
-		this.setGraphic("src/Project201Images/back.png");
+		this.setGraphic("back.png");
 		//this.setMaxSize(150, 50);
 	}
 	
@@ -39,12 +39,10 @@ public class Card extends Button
 	 */
 	public void setGraphic(String name)
 	{
-		file = new File(name);
-		Image image = new Image(file.toURI().toString());
-		ImageView iv = new ImageView();
+	    Image image = ResourceLoader.loadImage(name);
+	    ImageView iv = new ImageView(image);
 	    iv.setFitHeight(85);
 	    iv.setFitWidth(60);
-		iv.setImage(image);
 		this.setGraphic(iv);
 	}
 	/*
@@ -74,5 +72,11 @@ public class Card extends Button
 	}
 	public void setUnit_type(String unit_type) {
 		this.unit_type = unit_type;
+	}
+	public Boolean getActivated() {
+		return activated;
+	}
+	public void setActivated(Boolean activated) {
+		this.activated = activated;
 	}
 }
