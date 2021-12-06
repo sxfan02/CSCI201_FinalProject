@@ -1,28 +1,30 @@
-package LoginPackage;
 
 import java.util.*;
-import java.sql.*;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.nio.charset.StandardCharsets;
+import java.sql.*;
 
 
 public class Login {
+	
 	public static Connection getConnection() {
 		try {
-                    String url = "jdbc:mysql://54.193.145.5:3306/CSCI201-Final-Project";
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-                    Connection connection = DriverManager.getConnection(url,"admin", "CSCI201sucks!");
-                    System.out.println("Connection established");
-                    return connection; 
+			String driver = "com.mysql.jdbc.Driver";
+			String url = "jdbc:mysql://localhost:3306/testdb";
+			String user = "root";
+			String pwd = "root";
+			
+			Connection connection = DriverManager.getConnection(url, user, pwd);
+			System.out.println("Connection established");
+			return connection;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return null;
 	}
-        
-        public static String Hash(String pwd) {
+	public static String Hash(String pwd) {
 		MessageDigest md;
 		StringBuilder sb = new StringBuilder();
 		try {
@@ -40,15 +42,15 @@ public class Login {
 		return sb.toString();
 		
 	}
-	
-	public static void post(String table, String un, String pwd, String email) {
-		String sql = "INSERT INTO " + table + " (username, password, email) VALUES (?, ?, ?)";
+	public static void post(String table, String un, String pwd) {
+		String sql = "INSERT INTO " + table + " (username, password) VALUES (?, ?)";
 		try (Connection conn = getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);){
+				PreparedStatement ps = conn.prepareStatement(sql);){
 			ps.setString(1, un);
-			ps.setString(2, pwd);
-                        ps.setString(3, email);
-			ps.executeUpdate();
+			ps.setString(2, Hash(pwd));
+			//System.out.println(Hash(pwd));
+			int row = ps.executeUpdate();
+			Leaderboard.post("leaderboard", un, "0", "0");
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
 		}
@@ -57,16 +59,14 @@ public class Login {
 	public static boolean onLogin(String table, String un, String pwd) {
 		String sql = "SELECT password FROM " + table + " WHERE username=?";
 		try (Connection conn = getConnection();
-                        PreparedStatement ps = conn.prepareStatement(sql);){
+				PreparedStatement ps = conn.prepareStatement(sql);){
 			ps.setString(1, un);
 			ResultSet rs = ps.executeQuery();
-			
 			while (rs.next()) {
-                            String hashed = Login.Hash(pwd);
-                            if (rs.getString("password").equals(hashed)) {
-                                    System.out.println("Login success");
-                                    return true;
-                            }
+				if ((rs.getString("password")).equals(Hash(pwd))) {
+					System.out.println("Login success");
+					return true;
+				}
 			}
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
@@ -75,27 +75,22 @@ public class Login {
 		System.out.println("Login fail");
 		return false;
 	}
-        
-        public static boolean onRegistration(String table, String un)
-        {
-            String sql = "SELECT * FROM " + table + " WHERE username=?";
-            try(Connection conn = getConnection(); 
-                PreparedStatement ps = conn.prepareStatement(sql);){
-                ps.setString(1, un);
-                //checking if username already exists in database
-                ResultSet rs = ps.executeQuery();
-                if (rs.next() == false)
-                {
-                   return true;
-                }
-                else {
-                    return false;
-                }
-            } catch(SQLException e)
-            {
-                System.out.println("SQLException: " + e.getMessage());
-            }
-            return false;
-        }
-       
+	//Function checks if there exists a user in the database
+	public static boolean checkUserName(String table, String un) {
+		String sql = "SELECT username FROM " + table;
+		try (Connection conn = getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);){
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				if ((rs.getString("username")).equals(un)) {
+					//System.out.println("Username already exists");
+					return true;
+				}
+			}
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage());
+		}
+		return false;
+	}
+
 }

@@ -7,7 +7,7 @@ public class Leaderboard {
 
     public static Connection getConnection() {
 		try {
-                    String url = "jdbc:mysql://54.193.145.5:3306/CSCI201-Final-Project";
+                    String url = "jdbc:mysql://54.193.145.5:3308/CSCI201-Final-Project";
                     Class.forName("com.mysql.cj.jdbc.Driver");
                     Connection connection = DriverManager.getConnection(url,"admin","CSCI201sucks!");
                     System.out.println("Connection established");

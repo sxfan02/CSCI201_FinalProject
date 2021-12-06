@@ -1,0 +1,26 @@
+Hex Color Codes for Bannermen
+Samuel Adams - 2021
+
+Light Blue - #5FCDE4
+
+Light Grey - #BADB7
+
+Grey - #847E87
+
+Dark Grey - #696A6A
+
+Dark Dark Grey - #35312C
+
+Moss Green - #8F974A
+
+Cream (Old Paper Color) - #EEC39A
+
+Red - #AC3232
+
+Yellow - #FBF236
+
+Brown - #663931
+
+Blue - #639BFF
+
+Dark Blue - #5B6EE1
