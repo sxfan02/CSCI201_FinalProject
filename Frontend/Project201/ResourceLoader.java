@@ -5,20 +5,18 @@ import javafx.scene.media.AudioClip;
 
 public class ResourceLoader
 {
-    static ResourceLoader rl = new ResourceLoader();
+    static ResourceLoader resourcel = new ResourceLoader();
 
    public static Image loadImage(String imageName)
    {
       URI uri;
-	  String uriString = "";
+	  String stringForUri = "";
       try
       {
-          uri =  rl.getClass().getResource("images/"+imageName).toURI();
-          uriString = uri.toString();
+          uri =  resourcel.getClass().getResource("images/"+imageName).toURI();
+          stringForUri = uri.toString();
       }
       catch(Exception e) { System.out.println("image load error e="+e); }
-      return new Image(uriString);
+      return new Image(stringForUri);
    }
-
-
 }

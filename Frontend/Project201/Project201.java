@@ -1015,7 +1015,7 @@ public class Project201 extends Application {
 		});
 	}
 
-	public class Listener extends Thread {
+	public class Listener extends Thread { 
 		@Override
 		public void run() {
 			while (true) {
@@ -1040,6 +1040,7 @@ public class Project201 extends Application {
 							String card = len.nextToken();
 							p2Tiles.get(index).setCard_Name(card);
 						});
+						
 					} else if (phrase.equals("!Build_the_board")) {
 						Platform.runLater(() -> {
 							boolBuildTheBoard = false;
@@ -1056,6 +1057,7 @@ public class Project201 extends Application {
 							discardTile.setGraphic(word + ".png");
 						});
 					}
+					
 					else if (phrase.equals("!Card_flipped")) {
 						Platform.runLater(() -> {
 							String word2 = len.nextToken(); // "p1"
@@ -1074,6 +1076,9 @@ public class Project201 extends Application {
 								p2Tiles.get(index).setActivated(true);
 							}
 						});
+						
+						
+						
 					} else if (phrase.equals("!Disable")) {
 						Platform.runLater(() -> {
 							for (Card obj : p1Tiles) 

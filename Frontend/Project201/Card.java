@@ -25,13 +25,11 @@ public class Card extends Button
 	Card(GridPane root, int x, int y)
 	{
 		this.setGraphic("back.png");
-		//this.setMaxSize(150, 50);
 		root.add(this, x, y); 
 	}
 	Card()
 	{
 		this.setGraphic("back.png");
-		//this.setMaxSize(150, 50);
 	}
 	
 	/*
